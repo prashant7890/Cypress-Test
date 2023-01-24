@@ -16,7 +16,7 @@
     "@testing-library/cypress": "^8.0.7",
     "@testing-library/jest-dom": "^5.16.4",
     "babel-eslint": "^10.1.0",
-    "cypress": "^11.1.0",
+    "cypress": "^11.2.0",
     "cypress-downloadfile": "^1.2.2",
     "cypress-grep": "^2.14.0",
     "cypress-plugin-tab": "^1.0.5",
