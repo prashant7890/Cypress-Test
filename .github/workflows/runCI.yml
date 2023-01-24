@@ -1,0 +1,38 @@
+name: Cypress Regression Suite Execution
+on:
+  workflow_dispatch:
+    inputs:
+      specfiles:
+        description: Define spec path
+        required: true
+        default: cypress/e2e/MSIII/**
+# on:
+#   schedule:
+#     - cron: '*/60 * * * *'
+# on:
+#   push: 
+#     branches: [ main ]
+jobs:
+  cypress-run:
+    runs-on: self-hosted
+    timeout-minutes: 1000
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Chrome Browser run
+      uses: cypress-io/github-action@v4
+      with:
+        #build: npm run build
+        start: npm run
+        browser: chrome
+        wait-on-timeout: 300
+        # record: true
+    - name: Upload screenshot for failed Test Scripts
+      # parallel: true
+
+      uses: actions/upload-artifact@v2
+      if: failure()
+      with:
+        name: cypress-screenshots
+        path: cypress/screenshots
