@@ -1,11 +1,7 @@
 name: Cypress Regression Suite Execution
 on:
   workflow_dispatch:
-    inputs:
-      specfiles:
-        description: Define spec path
-        required: true
-        default: cypress/e2e/MSIII/**
+
 # on:
 #   schedule:
 #     - cron: '*/60 * * * *'
@@ -19,17 +15,22 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v2
-
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 16
+    - name: Install Dependencies
+      run: sudo apt-get update && sudo apt-get install -y wget xvfb libnss3-dev libgdk-pixbuf2.0-dev libgtk-3-dev libxss-dev libasound2
+    - name: Download Chrome
+      run: sudo wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+    - name: Install Chrome
+      run: sudo apt-get install -y ./google-chrome-stable_current_amd64.deb
     - name: Chrome Browser run
       uses: cypress-io/github-action@v4
       with:
-        #build: npm run build
         start: npm run
         browser: chrome
         wait-on-timeout: 300
-        # record: true
     - name: Upload screenshot for failed Test Scripts
-      # parallel: true
 
       uses: actions/upload-artifact@v2
       if: failure()
