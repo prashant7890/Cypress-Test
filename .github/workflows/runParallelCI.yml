@@ -61,8 +61,8 @@ jobs:
         wait-on-timeout: 300
         record: true
         parallel: true
-        env:
-          CYPRESS_RECORD_KEY: 251a236e-4f6c-4a5d-b93e-f3706211da18
+      env:
+        CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
     - name: Upload screenshot for failed Test Scripts
 
       uses: actions/upload-artifact@v2
