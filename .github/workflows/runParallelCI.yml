@@ -1,0 +1,61 @@
+name: Cypress Regression Suite Execution
+on:
+  workflow_dispatch:
+
+# on:
+#   schedule:
+#     - cron: '*/60 * * * *'
+# on:
+#   push: 
+#     branches: [ main ]
+jobs:
+  get-containers:
+    name: get-containers
+    runs-on: ubuntu-latest
+    outputs:
+      containers: ${{ steps.set-containers.outputs.containers }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: set container
+        id: set-containers
+        run: |
+          for (( i=1; i <= ${{ github.event.inputs.containers }}; i++ ))
+          do
+            arr+="$i,"
+          done
+          echo "::set-output name=containers::["${arr[@]::-1}"]"
+
+  cypress-run:
+    runs-on: self-hosted
+    needs: ["get-containers"]
+    timeout-minutes: 1000
+    strategy:
+      fail-fast: false
+      matrix:
+        # run copies of the current job in parallel
+        containers: ${{fromJson(needs.get-containers.outputs.containers)}
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 16
+    - name: Install Dependencies
+      run: sudo apt-get update && sudo apt-get install -y wget xvfb libnss3-dev libgdk-pixbuf2.0-dev libgtk-3-dev libxss-dev libasound2
+    - name: Download Chrome
+      run: sudo wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+    - name: Install Chrome
+      run: sudo apt-get install -y ./google-chrome-stable_current_amd64.deb
+    - name: Chrome Browser run
+      uses: cypress-io/github-action@v4
+      with:
+        start: npm run
+        browser: chrome
+        wait-on-timeout: 300
+    - name: Upload screenshot for failed Test Scripts
+
+      uses: actions/upload-artifact@v2
+      if: failure()
+      with:
+        name: cypress-screenshots
+        path: cypress/screenshots
