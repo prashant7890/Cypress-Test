@@ -16,6 +16,19 @@ on:
 #   push: 
 #     branches: [ main ]
 jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      uuid: ${{ steps.uuid.outputs.value }}
+    steps:
+      - name: Generate unique ID
+        id: uuid
+        # take the current commit + timestamp together
+        # the typical value would be something like "sha-5d3fe...35d3-time-1620841214"
+        run: echo "::set-output name=value::sha-$GITHUB_SHA-time-$(date +"%s")"
+
+      - name: Print unique ID
+        run: echo "generated id ${{ steps.uuid.outputs.value }}"
   get-containers:
     name: get-containers
     runs-on: ubuntu-latest
@@ -34,7 +47,7 @@ jobs:
 
   cypress-run:
     runs-on: self-hosted
-    needs: ["get-containers"]
+    needs: ["get-containers", "prepare"]
     timeout-minutes: 1000
     strategy:
       fail-fast: false
@@ -61,12 +74,20 @@ jobs:
         wait-on-timeout: 300
         record: true
         parallel: true
+        ci-build-id: ${{ needs.prepare.outputs.uuid }}
       env:
         CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
-    - name: Upload screenshot for failed Test Scripts
 
+    - name: Upload screenshot for failed Test Scripts
       uses: actions/upload-artifact@v2
       if: failure()
       with:
         name: cypress-screenshots
         path: cypress/screenshots
+
+    - name: Upload video artifacts
+      uses: actions/upload-artifact@v2
+      if: always()
+      with:
+        name: cypress-videos
+        path: cypress/videos
