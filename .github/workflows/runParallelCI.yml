@@ -1,4 +1,4 @@
-name: Cypress Regression Suite Execution
+name: Cypress Regression Suite Parallel Execution
 on:
   workflow_dispatch:
 
