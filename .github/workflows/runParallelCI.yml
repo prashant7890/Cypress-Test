@@ -61,7 +61,7 @@ jobs:
         wait-on-timeout: 300
         record: true
         parallel: true
-    env:
+        env:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
     - name: Upload screenshot for failed Test Scripts
 
