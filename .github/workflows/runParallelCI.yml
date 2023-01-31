@@ -1,7 +1,14 @@
 name: Cypress Regression Suite Parallel Execution
 on:
   workflow_dispatch:
-
+    inputs:
+      containers:
+        description: "Containers"
+        required: true
+      run_title:
+        description: Cypress run title
+        required: true
+        default: Manually triggered run
 # on:
 #   schedule:
 #     - cron: '*/60 * * * *'
