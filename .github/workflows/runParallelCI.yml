@@ -59,6 +59,7 @@ jobs:
         start: npm run
         browser: chrome
         wait-on-timeout: 300
+        parallel: true
     - name: Upload screenshot for failed Test Scripts
 
       uses: actions/upload-artifact@v2
