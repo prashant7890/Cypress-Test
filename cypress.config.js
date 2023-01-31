@@ -2,7 +2,7 @@ const { defineConfig } = require("cypress");
 
 module.exports = defineConfig({
   chromeWebSecurity: false,
-  projectId: "",
+  projectId: 'w2ydc4',
   numTestsKeptInMemory: 0,
   env: {
     IsCypressHandlingNewTabs: true,
